@@ -8,12 +8,13 @@ const PORT = process.env.PORT || 3000
 
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(express.static("publick"))
 app.use(express.urlencoded({extended:true}))
-app.use(cookieParser())
 import userRoute from "./routes/userRoute"
+import categoryRoute from "./routes/categoryRoute"
 app.use("/api/user",userRoute)
-
+app.use("/api/category",categoryRoute)
 app.listen(PORT,()=>{
     console.log(`server is listing on port : ${PORT}`);
     

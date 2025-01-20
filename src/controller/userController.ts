@@ -1,22 +1,28 @@
-import vine from "@vinejs/vine";
+
 import { asyncHandler } from "../middleware/asycnHandler";
 import {Request,Response,NextFunction} from "express"
-import { registerSchema } from "../Validation/authValidation";
+import {LoginSchema, RegisterSchema } from "../Validation/authValidation";
 import prisma from "../db/dbConnect";
 import bcrypt from "bcryptjs"
-import { errors } from "@vinejs/vine";
+import generateToken from "../utils/createToken";
+import { z } from "zod";
+import { User } from "@prisma/client";
+interface CustomRequest extends Request {
+  user?:any;
+}
+interface Id extends User{
+  id : number
+}
 export const register = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
     try {
-      // const vine = await import('@vinejs/vine');
-      // const errors = await import('@vinejs/errors');
-      const body = req.body;
-      const validator = vine.compile(registerSchema);
-      const payload = await validator.validate(body);
+    RegisterSchema.parse(req.body)
+      const {name,email,password} = req.body;
+      
   
       // Check if email exists
-      const findUser = await prisma.user.findUnique({
+      const findUser = await prisma.user.findFirst({
         where: {
-          email: payload.email,
+          email: email,
         },
       });
   
@@ -30,26 +36,176 @@ export const register = asyncHandler(async (req: Request, res: Response): Promis
   
       // Encrypt the password
       const salt = await bcrypt.genSalt(10);
-      payload.password = await bcrypt.hash(payload.password, salt);
+      const hashedPassword = await bcrypt.hash(password, salt);
   
       const user = await prisma.user.create({
-        data: payload,
+        data: {
+          name,
+          email,
+          password : hashedPassword
+        }
       });
+
+     const token = generateToken(res,user.id)
   
       return res.json({
         status: 200,
         message: "User created successfully",
         user,
+        token
+        
       });
     } catch (error) {
       console.log("The error is", error);
-      if (error instanceof errors.E_VALIDATION_ERROR) {
-        return res.status(400).json({ errors: error.messages });
-      } else {
-        return res.status(500).json({
-          status: 500,
-          message: "Something went wrong. Please try again.",
-        });
-      }
+     
+        return res.status(500).json("Internal server error");
+    
     }
   });
+
+  export const login = asyncHandler(async(req:Request,res:Response)=>{
+    try {
+      LoginSchema.parse(req.body)
+      const {email,password} = req.body;
+      const user = await prisma.user.findFirst({
+        where : {
+          email : email
+        }
+      })
+      if (user) {
+        const isPasswordMatch = await bcrypt.compare(password,user.password)
+        if (isPasswordMatch) {
+          generateToken(res,user.id)
+          res.status(200).json({
+            message : true,
+            user
+          })
+        }else{
+          res.status(400).json({success : false, message : "Invalid user email or password"})
+        }
+
+      }else{
+        res.status(400).json({success :false, message : "User not found "})
+      }
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json("Internal server error")
+      
+    }
+  })
+
+  export const getUsers = asyncHandler(async(req:Request,res:Response)=>{
+    try {
+      const user = await prisma.user.findMany({})
+      res.status(200).json(user)
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json("Internal server error")
+      
+    }
+  })
+
+  export const getUser = asyncHandler(async(req:CustomRequest,res:Response)=>{
+    try {
+      const user = await prisma.user.findUnique({where :{
+        id : req.user.id
+      }})
+      if (user) {
+        res.status(200).json(user)
+      }else{
+        res.status(400).json({success:false, message : "User not found"})
+      }
+    } catch (error) {
+      res.status(500).json({message : "Internal server error"})
+    }
+  })
+
+  export const getUserById = asyncHandler(async(req:Request,res:Response)=>{
+    try {
+      const user = await prisma.user.findUnique({where : {
+        id : Number( req.params.id)
+      }})
+      if (user) {
+        res.status(200).json(user)
+      }else{
+        res.status(500).json({success : false, message : "Internal server error"})
+      }
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({success:false, message : "Internal server error"})
+      
+    }
+  })
+
+  export const deleteUser = asyncHandler(async(req:Request,res:Response)=>{
+    try {
+      const userDeleted = await prisma.user.delete({
+        where : {
+          id : Number(req.params.id)
+        }
+      })
+if (userDeleted) {
+  res.status(200).json({success : true, message : "User deleted successfully"})
+}else{
+  res.status(400).json({success : false, message : "User not found"})
+}
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({message : "Internal server error"})
+      
+    }
+  })
+
+  export const updateUser = asyncHandler(async(req:Request,res:Response)=>{
+    
+    const {name,email,password} = req.body;
+    try {
+      const salt = await bcrypt.genSalt(10)
+      const hashedPassword = await bcrypt.hash(password,salt)
+      const updateduser = await prisma.user.update({
+        where : {
+          id :  Number(req.params.id)
+        },
+        data : {
+          name,
+          email,
+          password : hashedPassword
+        }
+      })
+      if (updateduser) {
+        res.status(200).json({success : true, message : "User updated successfully", updateduser})
+      }else{
+        res.status(400).json({success : false, message : "User updation failed! try again"})
+      }
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({success : false, message : "Internal server error"})
+      
+    }
+  })
+
+  export const updateUserByAdmin = asyncHandler(async(req:Request,res:Response)=>{
+    try {
+      const {name,email,isAdmin} = req.body
+      const user = await prisma.user.update({
+        where : {
+          id : Number(req.params.id)
+        },
+        data : {
+          name,
+          email,
+          isAdmin:Boolean(isAdmin)
+        }
+      })
+      res.status(200).json({success : true, message : "User updated", user})
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({success : false, message : "Internal server error"})
+      
+    }
+  })

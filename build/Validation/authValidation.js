@@ -1,19 +1,16 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginSchema = exports.registerSchema = void 0;
-const vine_1 = __importDefault(require("@vinejs/vine"));
-const CustomErrorReporter_1 = __importDefault(require("./CustomErrorReporter"));
-// * Custom Error Reporter
-vine_1.default.errorReporter = () => new CustomErrorReporter_1.default();
-exports.registerSchema = vine_1.default.object({
-    name: vine_1.default.string().minLength(2).maxLength(150),
-    email: vine_1.default.string().email(),
-    password: vine_1.default.string().minLength(6).maxLength(100).confirmed(),
+exports.CategorySchema = exports.LoginSchema = exports.RegisterSchema = void 0;
+const zod_1 = require("zod");
+exports.RegisterSchema = zod_1.z.object({
+    name: zod_1.z.string(),
+    email: zod_1.z.string().email(),
+    password: zod_1.z.string().min(5)
 });
-exports.loginSchema = vine_1.default.object({
-    email: vine_1.default.string().email(),
-    password: vine_1.default.string(),
+exports.LoginSchema = zod_1.z.object({
+    email: zod_1.z.string().email(),
+    password: zod_1.z.string().min(5)
+});
+exports.CategorySchema = zod_1.z.object({
+    name: zod_1.z.string()
 });

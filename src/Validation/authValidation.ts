@@ -1,17 +1,16 @@
-import vine from "@vinejs/vine";
-import CustomErrorReporter from "./CustomErrorReporter"
+import {z} from "zod"
 
+export const RegisterSchema = z.object({
+  name : z.string(),
+  email : z.string().email(),
+  password : z.string().min(5)
+})
 
-// * Custom Error Reporter
-vine.errorReporter = () => new CustomErrorReporter();
+export const LoginSchema = z.object({
+  email : z.string().email(),
+  password : z.string().min(5)
+})
 
-export const registerSchema = vine.object({
-  name: vine.string().minLength(2).maxLength(150),
-  email: vine.string().email(),
-  password: vine.string().minLength(6).maxLength(100).confirmed(),
-});
-
-export const loginSchema = vine.object({
-  email: vine.string().email(),
-  password: vine.string(),
-});
+export const CategorySchema = z.object({
+  name : z.string()
+})

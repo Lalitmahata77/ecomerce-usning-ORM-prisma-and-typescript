@@ -14,11 +14,20 @@ datasource db {
 }
 
 model User {
-id Int @id @default(autoincrement())
-name String @db.VarChar(191)
-email String @unique @db.VarChar(191)
-password String
-profile String?
-created_at DateTime @default(now())
-updated_at DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(191)
+  email      String   @unique @db.VarChar(191)
+  password   String
+  profile    String?
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  isAdmin    Boolean  @default(false)
+}
+
+model Category {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(191)
+}
+model Post {
+  title String @db.VarChar(192) @unique
 }
