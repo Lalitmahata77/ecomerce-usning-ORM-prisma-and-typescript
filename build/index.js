@@ -14,7 +14,11 @@ app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.static("publick"));
 app.use(express_1.default.urlencoded({ extended: true }));
 const userRoute_1 = __importDefault(require("./routes/userRoute"));
+const categoryRoute_1 = __importDefault(require("./routes/categoryRoute"));
+const productRoute_1 = __importDefault(require("./routes/productRoute"));
 app.use("/api/user", userRoute_1.default);
+app.use("/api/category", categoryRoute_1.default);
+app.use("/api/product", productRoute_1.default);
 app.listen(PORT, () => {
     console.log(`server is listing on port : ${PORT}`);
 });

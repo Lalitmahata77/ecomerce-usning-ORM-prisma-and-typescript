@@ -22,12 +22,40 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
   isAdmin    Boolean  @default(false)
+  Review     Review[]
 }
 
 model Category {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(191)
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(191)
+  Post Product[]
 }
-model Post {
-  title String @db.VarChar(192) @unique
+
+model Review {
+  id      Int    @id @default(autoincrement())
+  name    String @db.VarChar(191)
+  comment String @db.VarChar(191)
+  rating  Int
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id Int
+
+  product   Product? @relation(fields: [postId], references: [id])
+  postId Int?
+}
+
+model Product {
+  id              Int      @id @default(autoincrement())
+  name            String   @db.VarChar(192)
+  image           String
+  quantity        Int
+  description     String
+  reviews         Review[]
+  rating          Int?
+  numberOfReviews Int?
+  price           Float
+  countInStock    Int
+  category        Category @relation(fields: [category_id], references: [id])
+  category_id     Int
+  brand String
+  createdAt DateTime @default(now())
 }

@@ -1,6 +1,6 @@
 import { asyncHandler } from "../middleware/asycnHandler";
 import {Request,Response} from "express"
-import { CategorySchema } from "../Validation/authValidation";
+import { CategorySchema,updateCategorySchema } from "../Validation/authValidation";
 import prisma from "../db/dbConnect";
 
 export const createCategory = asyncHandler(async(req:Request, res:Response)=>{
@@ -82,7 +82,7 @@ export const deleteCategory = asyncHandler(async(req:Request,res:Response)=>{
 })
 
 export const updateCategory = asyncHandler(async(req:Request,res:Response)=>{
-    CategorySchema.parse(req.body)
+    updateCategorySchema.parse(req.body)
     const {name} = req.body
     try {
         const category = await prisma.category.update({
