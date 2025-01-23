@@ -14,9 +14,11 @@ app.use(express.urlencoded({extended:true}))
 import userRoute from "./routes/userRoute"
 import categoryRoute from "./routes/categoryRoute"
 import productRoute from "./routes/productRoute"
+import orderRoute from "./routes/orderRoute"
 app.use("/api/user",userRoute)
 app.use("/api/category",categoryRoute)
 app.use("/api/product",productRoute)
+app.use("/api/order", orderRoute)
 app.listen(PORT,()=>{
     console.log(`server is listing on port : ${PORT}`);
     

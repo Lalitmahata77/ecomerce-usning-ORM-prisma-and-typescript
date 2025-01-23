@@ -243,7 +243,7 @@ export const newProducts = asyncHandler(async(req:Request,res:Response)=>{
                 createdAt : "desc"
             }
         })
-        
+        res.status(200).json(products)
     } catch (error) {
         console.log(error);
         res.status(500).json({success:false, message : "Internal server error"})
@@ -305,12 +305,14 @@ export const filterProducts = asyncHandler(
             }
 
             // Build query arguments
-            const args: { [key: string] : any } = {};         
-               if (checked.length) args.category = { $in: checked };
+            const args: { [key: string] : any} = {};         
+               if (checked.length) args.category = {$in : checked  };
             if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
 
             // Query the database
-            const products = await prisma.product.findMany(args);
+            const products = await prisma.product.findMany({
+                where: args
+            });
 
             // Return response
             res.json({

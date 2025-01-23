@@ -1,4 +1,4 @@
-import {z} from "zod"
+import {z, ZodString} from "zod"
 
 export const RegisterSchema = z.object({
   name : z.string(),
@@ -48,4 +48,38 @@ export const ReviewSchema = z.object({
 
 export const updateCategorySchema = z.object({
   name : z.string()
+})
+
+export const OrderSchema = z.object({
+  orderItems : z.array(z.object({
+    name : z.string(),
+    qty : z.number(),
+    image : z.string(),
+    price : z.number(),
+    product : z.string(),
+    // id : z.number()
+  })),
+  shippingAddress : z.object({
+    address : z.string(),
+    city : z.string(),
+    postalCode : z.string(),
+    counrty : z.string(),
+  }),
+  paymentMethod : z.string(),
+  itemsPrice : z.number(),
+  shippingPrice : z.number(),
+  taxPrice : z.number(),
+  totalPrice : z.number(),
+  isPaid : z.boolean(),
+  paidAt : z.string(),
+  isDelivered : z.boolean(),
+  deliveredAt : z.string(),
+  // user : z.string(),
+  paymentResult : z.object({
+    paymentId : z.string(),
+    status : z.string(),
+    updateTime : z.string(),
+    emailAddress : z.string()
+  })
+
 })
