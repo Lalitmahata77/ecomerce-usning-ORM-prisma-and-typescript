@@ -80,7 +80,7 @@ model Order {
   shippingAddress ShippingAddress @relation(fields: [shipping_id], references: [id])
   shipping_id Int
   paymentMethod String
-  paymentResult PaymentResult @relation(fields: [paymentResult_id], references: [id])
+  paymentResult PaymentResult @relation(fields: [paymentResult_id], references: [id]) 
   paymentResult_id Int
   itemsPrice Float
   taxPrice Float
@@ -90,6 +90,7 @@ model Order {
   paidAt DateTime?
   isDelivered Boolean @default(false)
   deliveredAt DateTime?
+  createdAt DateTime @default(now())
 
 }
 
@@ -104,7 +105,7 @@ model ShippingAddress {
 
 model PaymentResult {
   id          Int     @id @default(autoincrement())
-  paymentId   String?
+  paymentId   Int?
   status      String?
   updateTime  String?
   emailAddress String?

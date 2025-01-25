@@ -13,7 +13,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@paypal/paypal-js": "^8.2.0",
     "@prisma/client": "^6.2.1",
+    "@tailwindcss/vite": "^4.0.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.0",
     "@types/express-formidable": "^1.2.3",
@@ -25,6 +27,8 @@
     "express": "^4.21.2",
     "express-formidable": "^1.2.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "path": "^0.12.7",
     "prisma": "^6.2.1",
     "rimraf": "^6.0.1",
     "vine": "^0.1.1",
@@ -32,6 +36,7 @@
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.8",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.10.7",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",

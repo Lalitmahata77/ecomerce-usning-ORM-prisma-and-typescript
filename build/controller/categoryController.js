@@ -92,7 +92,7 @@ exports.deleteCategory = (0, asycnHandler_1.asyncHandler)((req, res) => __awaite
     }
 }));
 exports.updateCategory = (0, asycnHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    authValidation_1.CategorySchema.parse(req.body);
+    authValidation_1.updateCategorySchema.parse(req.body);
     const { name } = req.body;
     try {
         const category = yield dbConnect_1.default.category.update({
