@@ -1,6 +1,7 @@
 import express,{Express,Request,Response} from "express"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
+import cors from "cors"
 dotenv.config()
 const app:Express= express()
 
@@ -9,7 +10,10 @@ const PORT = process.env.PORT || 3000
 
 app.use(express.json())
 app.use(cookieParser())
-app.use(express.static("publick"))
+app.use(express.static("public"))
+app.use(cors({
+  origin : "*"
+}))
 app.use(express.urlencoded({extended:true}))
 import userRoute from "./routes/userRoute"
 import categoryRoute from "./routes/categoryRoute"
@@ -25,7 +29,7 @@ app.get("/api/config/paypal", (req:Request, res:Response) => {
     res.send({ clientId: process.env.PAYPAL_CLIENT_ID });
   });
 
-  const __dirname = path.resolve();
+  // const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname + "/uploads")));
 app.listen(PORT,()=>{
     console.log(`server is listing on port : ${PORT}`);

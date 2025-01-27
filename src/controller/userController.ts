@@ -209,3 +209,18 @@ if (userDeleted) {
       
     }
   })
+
+  export const logout = asyncHandler(async(req:Request, res:Response):Promise<void>=>{
+    try {
+      res.cookie("jwt", "", {
+        httpOnly: true,
+        // secure: process.env.NODE_ENV !== "development",
+        sameSite: "strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      })
+      res.status(200).json({message : "User logout successfully"})
+    } catch (error:any) {
+      console.log(error);
+      res.status(500).json({success : false, message : "Internal server error"})
+    }
+  })
